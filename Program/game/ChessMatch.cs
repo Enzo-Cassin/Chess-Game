@@ -11,6 +11,7 @@ namespace game
         public int Turn { get; private set; }
         public Color CurrentPlayer { get; private set; }
         public bool Over { get; private set; }
+        public bool Check { get; private set; }
         private HashSet<Piece> Pieces;
         private HashSet<Piece> Captured;
 
@@ -20,29 +21,60 @@ namespace game
             Turn = 1;
             CurrentPlayer = Color.White;
             Over = false;
+            Check = false;
             Pieces = new HashSet<Piece>();
             Captured = new HashSet<Piece>();
             InsertPieces();
         }
 
-        public void Move(Position origin, Position target)
+        public Piece Move(Position origin, Position target)
         {
             Piece p = Board.RemovePiece(origin);
             p.Move();
-            Piece removedPiece = Board.RemovePiece(target);
+            Piece capturedPiece = Board.RemovePiece(target);
             Board.InsertPiece(p, target);
 
-            if (removedPiece != null)
+            if (capturedPiece != null)
             {
-                Captured.Add(removedPiece);
+                Captured.Add(capturedPiece);
             }
+
+            return capturedPiece;
         }
 
         public void MakeMove(Position origin, Position target)
         {
-            Move(origin, target);
+            Piece capturedPiece = Move(origin, target);
+
+            if (InCheck(CurrentPlayer))
+            {
+                UndoMove(origin, target, capturedPiece);
+                throw new Exception("You can not get yourself in check!");
+            }
+
+            if (InCheck(Opponent(CurrentPlayer)))
+            {
+                Check = true;
+            }
+            else
+            { 
+                Check = false; 
+            }
+
             Turn++;
             ChangePlayer();
+        }
+
+        public void UndoMove(Position origin, Position target, Piece capturedPiece)
+        {
+            Piece p = Board.RemovePiece(target);
+            p.Demove();
+            if (capturedPiece != null)
+            {
+                Board.InsertPiece(capturedPiece, target);
+                Captured.Remove(capturedPiece);
+            }
+            Board.InsertPiece(p, origin);
         }
 
         public void ValidateOriginPosition(Position pos)
@@ -78,12 +110,57 @@ namespace game
         public HashSet<Piece> InGamePieces(Color color)
         {
             HashSet<Piece> aux = new HashSet<Piece>();
-            foreach (Piece p in Captured)
+            foreach (Piece p in Pieces)
             {
-                if (p.Color == color) { aux.Add(p); }
+                if (p.Color == color)
+                {
+                    aux.Add(p);
+                }
             }
             aux.ExceptWith(CapturedPieces(color));
             return aux;
+        }
+
+        private Color Opponent(Color color)
+        {
+            if (color == Color.White)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+
+        private Piece King_(Color color)
+        {
+            foreach (Piece p in InGamePieces(color))
+            {
+                if (p is King)
+                {
+                    return p;
+                }
+            }
+            return null;
+        }
+
+        public bool InCheck(Color color)
+        {
+            Piece K = King_(color);
+            if (K == null)
+            {
+                throw new Exception($"There is no {K.Color} in the board!");
+            }
+            foreach (Piece p in InGamePieces(Opponent(color)))
+            {
+                bool[,] mat = p.PossibleMovements();
+                if (mat[K.Position.Row, K.Position.Column])
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void InsertNewPiece(char column, int row, Piece piece)

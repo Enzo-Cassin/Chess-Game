@@ -20,6 +20,8 @@
             Movements++;
         }
 
+        public void Demove() { Movements--; }
+
         public bool ExistPossibleMovements()
         {
             bool[,] mat = PossibleMovements();
