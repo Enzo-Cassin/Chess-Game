@@ -14,10 +14,18 @@ namespace Chess_Game
             Console.WriteLine();
 
             Console.WriteLine($"Turn: {match.Turn}");
-            Console.WriteLine($"Waiting for move: {match.CurrentPlayer}\n");
-            if (match.Check)
+            if (!match.Over)
             {
-                Console.WriteLine("CHECK!");
+                Console.WriteLine($"Waiting for move: {match.CurrentPlayer}\n");
+                if (match.Check)
+                {
+                    Console.WriteLine("CHECK!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("CHECKMATE!");
+                Console.WriteLine($"Winner: {match.CurrentPlayer}");
             }
         }
 

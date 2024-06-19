@@ -61,6 +61,11 @@ namespace game
                 Check = false; 
             }
 
+            if (InCheckMate(Opponent(CurrentPlayer)))
+            {
+                Over = true;
+            }
+
             Turn++;
             ChangePlayer();
         }
@@ -163,6 +168,31 @@ namespace game
             return false;
         }
 
+        public bool InCheckMate(Color color) 
+        {
+            if (!InCheck(color)) { return false; }
+
+            foreach (Piece p in InGamePieces(color))
+            {
+                bool[,] mat = p.PossibleMovements();
+                for (int i = 0; i < Board.Rows; i++) 
+                { 
+                    for (int j = 0; j < Board.Columns; j++) 
+                    {
+                        if (mat[i, j])
+                        {
+                            Position origin = p.Position;
+                            Position target = new Position(i, j);
+                            Piece capturedPiece = Move(origin,target);
+                            bool testCheck = InCheck(color);
+                            UndoMove(origin, target, capturedPiece);
+                            if (!testCheck) { return false; }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
         public void InsertNewPiece(char column, int row, Piece piece)
         {
             Board.InsertPiece(piece, new ChessPosition(column, row).ToPosition());
@@ -171,20 +201,13 @@ namespace game
         private void InsertPieces()
         {
             InsertNewPiece('c', 1, new Rook(Board, Color.White));
-            InsertNewPiece('c', 2, new Rook(Board, Color.White));
-            InsertNewPiece('d', 2, new Rook(Board, Color.White));
-            InsertNewPiece('e', 2, new Rook(Board, Color.White));
-            InsertNewPiece('e', 1, new Rook(Board, Color.White));
+            InsertNewPiece('h', 7, new Rook(Board, Color.White));
 
             InsertNewPiece('d', 1, new King(Board, Color.White));
 
-            InsertNewPiece('c', 8, new Rook(Board, Color.Black));
-            InsertNewPiece('c', 7, new Rook(Board, Color.Black));
-            InsertNewPiece('d', 7, new Rook(Board, Color.Black));
-            InsertNewPiece('e', 7, new Rook(Board, Color.Black));
-            InsertNewPiece('e', 8, new Rook(Board, Color.Black));
+            InsertNewPiece('b', 8, new Rook(Board, Color.Black));
 
-            InsertNewPiece('d', 8, new King(Board, Color.Black));
+            InsertNewPiece('a', 8, new King(Board, Color.Black));
         }
     }
 }
