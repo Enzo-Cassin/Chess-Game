@@ -27,7 +27,7 @@ namespace Chess_Game
                     Console.Write("Target: ");
                     Position target = Screen.ReadChessPosition().ToPosition();
                     match.ValidateTargetPosition(origin, target);
-                    match.MakeMove(origin, target);
+                    match.PickMove(origin, target);
                 }
                 catch (Exception ex)
                 {

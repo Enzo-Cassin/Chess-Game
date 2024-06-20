@@ -15,12 +15,12 @@
             Movements = 0;
         }
 
-        public void Move()
+        public void AddMove()
         {
             Movements++;
         }
 
-        public void Demove() { Movements--; }
+        public void RemoveMove() { Movements--; }
 
         public bool ExistPossibleMovements()
         {
