@@ -87,6 +87,7 @@ namespace game
         public void PickMove(Position origin, Position target)
         {
             Piece capturedPiece = DoMove(origin, target);
+            Piece p = Board.Piece(target);
 
             if (InCheck(CurrentPlayer))
             {
@@ -112,7 +113,18 @@ namespace game
                 ChangePlayer();
             }
 
-            Piece p = Board.Piece(target);
+            // # Special Move - Promotion
+            if( p is Pawn && (p.Color == Color.White && target.Row == 0) || (p.Color == Color.Black && target.Row == 7))
+            {
+                p = Board.RemovePiece(target);
+                Pieces.Remove(p);
+                Piece queen = new Queen(Board, p.Color);
+                Board.InsertPiece(queen, target);
+                Pieces.Add(queen);
+
+            }
+
+            // # Special Move - En Passant
             if (p is Pawn && (target.Row == origin.Row-2 || target.Row == origin.Row + 2)) 
             {
                 EnPassant = p;
