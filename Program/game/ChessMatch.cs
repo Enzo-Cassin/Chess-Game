@@ -116,11 +116,29 @@ namespace game
             // # Special Move - Promotion
             if( p is Pawn && (p.Color == Color.White && target.Row == 0) || (p.Color == Color.Black && target.Row == 7))
             {
+                Console.WriteLine("To which piece you want to promote (Q / R / B / H)? [If you choose nothing or not a valid char it will be promoted to a queen]");
+                string str = Console.ReadLine();
+                Piece piece;
                 p = Board.RemovePiece(target);
                 Pieces.Remove(p);
-                Piece queen = new Queen(Board, p.Color);
-                Board.InsertPiece(queen, target);
-                Pieces.Add(queen);
+                if (str == "h" || str == "H")
+                {
+                    piece = new Horse(Board, p.Color);
+                }
+                else if (str == "r" || str == "R")
+                {
+                    piece = new Rook(Board, p.Color);
+                }
+                else if (str == "b" || str == "B")
+                {
+                    piece = new Bishop(Board, p.Color);
+                }
+                else
+                {
+                    piece = new Queen(Board, p.Color);
+                }
+                Board.InsertPiece(piece, target);
+                Pieces.Add(piece);
 
             }
 
