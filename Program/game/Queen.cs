@@ -39,10 +39,8 @@ namespace game
             pos.DefValues(Position.Row - 1, Position.Column + 1);
             while (Board.ValidPosition(pos) && CanMove(pos))
             {
-                if (Board.ValidPosition(pos) && CanMove(pos))
-                {
-                    mat[pos.Row, pos.Column] = true;
-                }
+                mat[pos.Row, pos.Column] = true;
+                if (Board.Piece(pos) != null && Board.Piece(pos).Color != Color) { break; }
                 pos.DefValues(pos.Row - 1, pos.Column + 1);
             }
             // Right
@@ -57,10 +55,8 @@ namespace game
             pos.DefValues(Position.Row + 1, Position.Column + 1);
             while (Board.ValidPosition(pos) && CanMove(pos))
             {
-                if (Board.ValidPosition(pos) && CanMove(pos))
-                {
-                    mat[pos.Row, pos.Column] = true;
-                }
+                mat[pos.Row, pos.Column] = true;
+                if (Board.Piece(pos) != null && Board.Piece(pos).Color != Color) { break; }
                 pos.DefValues(pos.Row + 1, pos.Column + 1);
             }
             // Down
@@ -75,10 +71,8 @@ namespace game
             pos.DefValues(Position.Row + 1, Position.Column - 1);
             while (Board.ValidPosition(pos) && CanMove(pos))
             {
-                if (Board.ValidPosition(pos) && CanMove(pos))
-                {
-                    mat[pos.Row, pos.Column] = true;
-                }
+                mat[pos.Row, pos.Column] = true;
+                if (Board.Piece(pos) != null && Board.Piece(pos).Color != Color) { break; }
                 pos.DefValues(pos.Row + 1, pos.Column - 1);
             }
             
@@ -94,10 +88,8 @@ namespace game
             pos.DefValues(Position.Row - 1, Position.Column - 1);
             while (Board.ValidPosition(pos) && CanMove(pos))
             {
-                if (Board.ValidPosition(pos) && CanMove(pos))
-                {
-                    mat[pos.Row, pos.Column] = true;
-                }
+                mat[pos.Row, pos.Column] = true;
+                if (Board.Piece(pos) != null && Board.Piece(pos).Color != Color) { break; }
                 pos.DefValues(pos.Row - 1, pos.Column - 1);
             }
             return mat;
